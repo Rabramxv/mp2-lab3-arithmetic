@@ -1,9 +1,89 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+// РѕР±СЉСЏРІР»РµРЅРёРµ Рё СЂРµР°Р»РёР·Р°С†РёСЏ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ СЃС‚РµРєР°
+// СЃС‚РµРє РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РѕРїРµСЂР°С†РёРё: 
+// - РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р°, 
+// - РёР·РІР»РµС‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°, 
+// - РїСЂРѕСЃРјРѕС‚СЂ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° (Р±РµР· СѓРґР°Р»РµРЅРёСЏ)
+// - РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ, 
+// - РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+// - РѕС‡РёСЃС‚РєР° СЃС‚РµРєР°
+// РїСЂРё РІСЃС‚Р°РІРєРµ РІ РїРѕР»РЅС‹Р№ СЃС‚РµРє РґРѕР»Р¶РЅР° РїРµСЂРµРІС‹РґРµР»СЏС‚СЊСЃСЏ РїР°РјСЏС‚СЊ
+#pragma once
+#include <iostream>
+#include <cstring>
+template <typename T>
+
+
+class Stack {
+private:
+    T* _array;
+    size_t _size;
+    size_t _top;//РёРЅРґРµРєСЃ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р°
+    bool _isEmpty = true;
+    void Expand() {
+        _size = _size * 2;
+        T* temp_arr = new T[_size];
+        std::memcpy(temp_arr, _array, (_top + 1) * sizeof(T)); // РєРѕРїРёСЂСѓРµРј С‚РѕР»СЊРєРѕ Р·Р°РЅСЏС‚С‹Рµ СЌР»РµРјРµРЅС‚С‹
+        delete[] _array;
+        _array = temp_arr;
+    }
+
+public:
+    Stack(size_t size = 10) {
+        _array = new T[size];
+        _size = size;
+        _top = 0;
+    }
+    bool IsEmpty()const {
+        return _isEmpty;
+    }
+    bool IsFull()const {
+        return _size - 1 == _top && !_isEmpty;
+    }
+
+    void Push(T elem) {
+        if (IsFull())
+            Expand();//РІ 2 СЂР°Р·Р°
+        if (IsEmpty())
+            _isEmpty = false;
+        else
+            _top++;
+        _array[_top] = elem;
+    }
+    size_t GetLength() {
+        return _size;
+    }
+    T Pop() {
+        if (IsEmpty())
+            throw "stack is empty";
+        if (_top == 0) {
+            _isEmpty = true;
+            return _array[_top];
+        }
+        return _array[_top--];
+    }
+
+    T Check()const {
+        if (IsEmpty())
+            throw "stack is empty";
+        return _array[_top];
+    }
+
+    size_t Count() const {
+        return _isEmpty ? 0 : _top + 1;
+    }
+
+    ~Stack() {
+        delete[] _array;
+    }
+    friend std::ostream& operator<<(std::ostream& os, const Stack& s) {
+        if (s.IsEmpty())
+            os << "stack is empty";
+        else
+            for (size_t i = 0; i <= s._top;i++)
+                os << s._array[i] << " ";
+
+
+        return os;
+    }
+
+};
